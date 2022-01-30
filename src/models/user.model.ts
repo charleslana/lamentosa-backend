@@ -2,10 +2,11 @@ import db from '../database';
 import User from '../types/user.type';
 
 class UserModel {
-  async create(user: User): Promise<User> {
+  async createOne(user: User): Promise<User> {
     try {
       const connection = await db.connect();
-      const sql = `INSERT INTO users (email, password, user_name, gender_users, breed_users) values ($1, $2, $3, $4, $5) returning *`;
+      const sql = `INSERT INTO users (email, password, user_name, gender_users, breed_users)
+      values ($1, $2, $3, $4, $5) RETURNING id, email, user_name, gender_users, breed_users`;
       const result = await connection.query(sql, [
         user.email,
         user.password,
@@ -18,6 +19,67 @@ class UserModel {
     } catch (error) {
       throw new Error(
         `Unable to create (${user.userName}): ${(error as Error).message}`
+      );
+    }
+  }
+
+  async getAll(): Promise<User[]> {
+    try {
+      const connection = await db.connect();
+      const sql =
+        'SELECT id, email, user_name, gender_users, breed_users FROM users';
+      const result = await connection.query(sql);
+      connection.release();
+      return result.rows;
+    } catch (error) {
+      throw new Error(`Error at retrieving users ${(error as Error).message}`);
+    }
+  }
+
+  async getOne(id: string): Promise<User> {
+    try {
+      const connection = await db.connect();
+      const sql = `SELECT id, email, user_name, gender_users, breed_users FROM users WHERE id = ($1)`;
+      const result = await connection.query(sql, [id]);
+      connection.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(`Could not find user ${id}, ${(error as Error).message}`);
+    }
+  }
+
+  async updateOne(user: User): Promise<User> {
+    try {
+      const connection = await db.connect();
+      const sql = `UPDATE users SET email=$1, password=$2, user_name=$3, gender_users=$4, breed_users=$5
+      WHERE id=$6 RETURNING id, email, user_name, gender_users, breed_users`;
+      const result = await connection.query(sql, [
+        user.email,
+        user.password,
+        user.userName,
+        user.gender,
+        user.breed,
+        user.id,
+      ]);
+      connection.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(
+        `Could not update user: (${user.userName}): ${(error as Error).message}`
+      );
+    }
+  }
+
+  async deleteOne(id: string): Promise<User> {
+    try {
+      const connection = await db.connect();
+      const sql = `DELETE FROM users WHERE id=($1) RETURNING id, email, user_name, gender_users, breed_users`;
+      const result = await connection.query(sql, [id]);
+      connection.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(
+        `Could not delete user ${id} ${(error as Error).message}`
       );
     }
   }

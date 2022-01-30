@@ -6,30 +6,82 @@ import { Router } from 'express';
 
 const routes = Router();
 
-routes.post(
-  '/',
-  celebrate(
-    {
-      [Segments.BODY]: {
-        email: Joi.string().email().trim().max(50).required(),
-        password: Joi.string().required().min(6).max(50),
-        userName: Joi.string()
-          .pattern(new RegExp('^[a-zA-ZÀ-ú0-9_]*$'))
-          .trim()
-          .min(3)
-          .max(50)
-          .required(),
-        gender: Joi.string()
-          .valid(...Object.values(GenderEnum))
-          .required(),
-        breed: Joi.string()
-          .valid(...Object.values(BreedEnum))
-          .required(),
+routes
+  .route('/')
+  .get(controllers.getAll)
+  .post(
+    celebrate(
+      {
+        [Segments.BODY]: {
+          email: Joi.string().email().trim().max(50).required(),
+          password: Joi.string().required().min(6).max(50),
+          userName: Joi.string()
+            .pattern(new RegExp('^[a-zA-ZÀ-ú0-9_]*$'))
+            .trim()
+            .min(3)
+            .max(50)
+            .required(),
+          gender: Joi.string()
+            .valid(...Object.values(GenderEnum))
+            .required(),
+          breed: Joi.string()
+            .valid(...Object.values(BreedEnum))
+            .required(),
+        },
       },
-    },
-    { abortEarly: false }
-  ),
-  controllers.create
-);
+      { abortEarly: false }
+    ),
+    controllers.createOne
+  )
+  .put(
+    celebrate(
+      {
+        [Segments.BODY]: {
+          id: Joi.string().uuid().required(),
+          email: Joi.string().email().trim().max(50).required(),
+          password: Joi.string().required().min(6).max(50),
+          userName: Joi.string()
+            .pattern(new RegExp('^[a-zA-ZÀ-ú0-9_]*$'))
+            .trim()
+            .min(3)
+            .max(50)
+            .required(),
+          gender: Joi.string()
+            .valid(...Object.values(GenderEnum))
+            .required(),
+          breed: Joi.string()
+            .valid(...Object.values(BreedEnum))
+            .required(),
+        },
+      },
+      { abortEarly: false }
+    ),
+    controllers.updateOne
+  );
+
+routes
+  .route('/:id')
+  .get(
+    celebrate(
+      {
+        [Segments.PARAMS]: {
+          id: Joi.string().uuid().required(),
+        },
+      },
+      { abortEarly: false }
+    ),
+    controllers.getOne
+  )
+  .delete(
+    celebrate(
+      {
+        [Segments.PARAMS]: {
+          id: Joi.string().uuid().required(),
+        },
+      },
+      { abortEarly: false }
+    ),
+    controllers.deleteOne
+  );
 
 export default routes;

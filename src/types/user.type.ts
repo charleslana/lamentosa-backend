@@ -2,7 +2,7 @@ import BreedEnum from '../enum/breed.enum';
 import GenderEnum from '../enum/gender.enum';
 
 type User = {
-  id?: number;
+  id?: string;
   email: string;
   password: string;
   userName: string;
