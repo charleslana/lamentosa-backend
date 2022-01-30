@@ -19,7 +19,7 @@ routes
             .pattern(new RegExp('^[a-zA-ZÀ-ú0-9_]*$'))
             .trim()
             .min(3)
-            .max(50)
+            .max(20)
             .required(),
           gender: Joi.string()
             .valid(...Object.values(GenderEnum))
@@ -44,7 +44,7 @@ routes
             .pattern(new RegExp('^[a-zA-ZÀ-ú0-9_]*$'))
             .trim()
             .min(3)
-            .max(50)
+            .max(20)
             .required(),
           gender: Joi.string()
             .valid(...Object.values(GenderEnum))

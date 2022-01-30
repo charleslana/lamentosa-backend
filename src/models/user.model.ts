@@ -2,7 +2,7 @@ import db from '../database';
 import User from '../types/user.type';
 
 class UserModel {
-  async createOne(user: User): Promise<User> {
+  public async createOne(user: User): Promise<User> {
     try {
       const connection = await db.connect();
       const sql = `INSERT INTO users (email, password, user_name, gender_users, breed_users)
@@ -23,7 +23,61 @@ class UserModel {
     }
   }
 
-  async getAll(): Promise<User[]> {
+  public async deleteOne(id: string): Promise<User> {
+    try {
+      const connection = await db.connect();
+      const sql = `DELETE FROM users WHERE id=($1) RETURNING id, email, user_name, gender_users, breed_users`;
+      const result = await connection.query(sql, [id]);
+      connection.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(
+        `Could not delete user ${id} ${(error as Error).message}`
+      );
+    }
+  }
+
+  public async findByEmail(email: string): Promise<User | undefined> {
+    try {
+      const connection = await db.connect();
+      const sql = `SELECT id, email FROM users WHERE email = ($1)`;
+      const result = await connection.query(sql, [email]);
+      connection.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(
+        `Could not find email ${email}, ${(error as Error).message}`
+      );
+    }
+  }
+
+  public async findById(id: string): Promise<User | undefined> {
+    try {
+      const connection = await db.connect();
+      const sql = `SELECT id FROM users WHERE id = ($1)`;
+      const result = await connection.query(sql, [id]);
+      connection.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(`Could not find id ${id}, ${(error as Error).message}`);
+    }
+  }
+
+  public async findByUserName(userName: string): Promise<User | undefined> {
+    try {
+      const connection = await db.connect();
+      const sql = `SELECT id, user_name FROM users WHERE user_name = ($1)`;
+      const result = await connection.query(sql, [userName]);
+      connection.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(
+        `Could not find username ${userName}, ${(error as Error).message}`
+      );
+    }
+  }
+
+  public async getAll(): Promise<User[]> {
     try {
       const connection = await db.connect();
       const sql =
@@ -36,7 +90,7 @@ class UserModel {
     }
   }
 
-  async getOne(id: string): Promise<User> {
+  public async getOne(id: string): Promise<User> {
     try {
       const connection = await db.connect();
       const sql = `SELECT id, email, user_name, gender_users, breed_users FROM users WHERE id = ($1)`;
@@ -48,7 +102,7 @@ class UserModel {
     }
   }
 
-  async updateOne(user: User): Promise<User> {
+  public async updateOne(user: User): Promise<User> {
     try {
       const connection = await db.connect();
       const sql = `UPDATE users SET email=$1, password=$2, user_name=$3, gender_users=$4, breed_users=$5
@@ -66,34 +120,6 @@ class UserModel {
     } catch (error) {
       throw new Error(
         `Could not update user: (${user.userName}): ${(error as Error).message}`
-      );
-    }
-  }
-
-  async deleteOne(id: string): Promise<User> {
-    try {
-      const connection = await db.connect();
-      const sql = `DELETE FROM users WHERE id=($1) RETURNING id, email, user_name, gender_users, breed_users`;
-      const result = await connection.query(sql, [id]);
-      connection.release();
-      return result.rows[0];
-    } catch (error) {
-      throw new Error(
-        `Could not delete user ${id} ${(error as Error).message}`
-      );
-    }
-  }
-
-  async findByEmail(email: string): Promise<number> {
-    try {
-      const connection = await db.connect();
-      const sql = `SELECT email FROM users WHERE email = ($1)`;
-      const result = await connection.query(sql, [email]);
-      connection.release();
-      return result.rowCount;
-    } catch (error) {
-      throw new Error(
-        `Could not find email ${email}, ${(error as Error).message}`
       );
     }
   }
