@@ -1,10 +1,11 @@
+import config from './config';
 import cors from 'cors';
+import db from './database';
 import errorMiddleware from './middleware/error.middleware';
 import express, { Application, Request, Response } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { rateLimit } from 'express-rate-limit';
-import config from './config';
 
 const app: Application = express();
 const port = config.port || 3000;
@@ -39,6 +40,19 @@ app.post('/', (request: Request, response: Response) => {
     message: 'Hello World from post',
     data: request.body,
   });
+});
+
+db.connect().then(client => {
+  return client
+    .query('SELECT NOW()')
+    .then(response => {
+      client.release();
+      console.log(response.rows);
+    })
+    .catch(error => {
+      client.release();
+      console.log(error.stack);
+    });
 });
 
 app.use(errorMiddleware);
