@@ -2,7 +2,7 @@ import AppError from '../shared/app.error';
 import User from '../types/user.type';
 import UserModel from '../models/user.model';
 
-class UsersServices {
+class UserService {
   public async createOne(user: User): Promise<User> {
     const userModel = new UserModel();
     const emailExists = await userModel.findByEmail(user.email);
@@ -57,4 +57,4 @@ class UsersServices {
   }
 }
 
-export default UsersServices;
+export default UserService;
