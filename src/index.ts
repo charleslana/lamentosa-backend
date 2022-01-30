@@ -1,12 +1,15 @@
+import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
-import morgan from 'morgan';
 import helmet from 'helmet';
+import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 
 const app: Application = express();
 const port = 3000;
 
 app.use(express.json());
+
+app.use(cors());
 
 app.use(morgan('common'));
 
