@@ -5,6 +5,8 @@ import errorMiddleware from './middleware/error.middleware';
 import express, { Application, Request, Response } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import routes from './routes';
+import { errors } from 'celebrate';
 import { rateLimit } from 'express-rate-limit';
 
 const app: Application = express();
@@ -28,17 +30,11 @@ app.use(
   })
 );
 
+app.use('/api', routes);
+
 app.get('/', (request: Request, response: Response) => {
-  throw new Error('Error exist');
   return response.json({
     message: 'Hello World',
-  });
-});
-
-app.post('/', (request: Request, response: Response) => {
-  return response.json({
-    message: 'Hello World from post',
-    data: request.body,
   });
 });
 
@@ -55,10 +51,12 @@ db.connect().then(client => {
     });
 });
 
+app.use(errors());
+
 app.use(errorMiddleware);
 
 app.use((_request: Request, response: Response) => {
-  return response.status(400).json({
+  return response.status(404).json({
     message: 'Not Found',
   });
 });
