@@ -4,9 +4,10 @@ import express, { Application, Request, Response } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { rateLimit } from 'express-rate-limit';
+import config from './config';
 
 const app: Application = express();
-const port = 3000;
+const port = config.port || 3000;
 
 app.use(express.json());
 
