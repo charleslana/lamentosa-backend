@@ -1,8 +1,9 @@
 import cors from 'cors';
+import errorMiddleware from './middleware/error.middleware';
 import express, { Application, Request, Response } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
+import { rateLimit } from 'express-rate-limit';
 
 const app: Application = express();
 const port = 3000;
@@ -26,6 +27,7 @@ app.use(
 );
 
 app.get('/', (request: Request, response: Response) => {
+  throw new Error('Error exist');
   return response.json({
     message: 'Hello World',
   });
@@ -35,6 +37,14 @@ app.post('/', (request: Request, response: Response) => {
   return response.json({
     message: 'Hello World from post',
     data: request.body,
+  });
+});
+
+app.use(errorMiddleware);
+
+app.use((_request: Request, response: Response) => {
+  return response.status(400).json({
+    message: 'Not Found',
   });
 });
 
