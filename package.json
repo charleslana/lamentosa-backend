@@ -9,7 +9,9 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "npm run build && node dist/index.js",
-    "test": "npm run build && jasmine"
+    "test": "npm run build && jasmine",
+    "migration:up": "db-migrate up",
+    "migration:down": "db-migrate down"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +38,8 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "db-migrate": "^0.11.13",
+    "db-migrate-pg": "^1.2.2",
     "dotenv": "^14.3.2",
     "express": "^4.17.2",
     "express-rate-limit": "^6.2.0",
