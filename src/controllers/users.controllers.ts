@@ -1,3 +1,4 @@
+import AppError from '../shared/app.error';
 import UserModel from '../models/user.model';
 import { NextFunction, Request, Response } from 'express';
 
@@ -9,6 +10,10 @@ export const createOne = async (
   next: NextFunction
 ) => {
   try {
+    const emailExists = await userModel.findByEmail(request.body.email);
+    if (emailExists) {
+      throw new AppError('Email already exists');
+    }
     const user = await userModel.createOne(request.body);
     return response.json({
       status: 'success',

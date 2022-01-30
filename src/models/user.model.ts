@@ -83,6 +83,20 @@ class UserModel {
       );
     }
   }
+
+  async findByEmail(email: string): Promise<number> {
+    try {
+      const connection = await db.connect();
+      const sql = `SELECT email FROM users WHERE email = ($1)`;
+      const result = await connection.query(sql, [email]);
+      connection.release();
+      return result.rowCount;
+    } catch (error) {
+      throw new Error(
+        `Could not find email ${email}, ${(error as Error).message}`
+      );
+    }
+  }
 }
 
 export default UserModel;
