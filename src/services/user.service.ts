@@ -3,6 +3,14 @@ import User from '../types/user.type';
 import UserModel from '../models/user.model';
 
 class UserService {
+  public async authenticate(
+    email: string,
+    password: string
+  ): Promise<User | undefined> {
+    const userModel = new UserModel();
+    return await userModel.authenticate(email, password);
+  }
+
   public async createOne(user: User): Promise<User> {
     const userModel = new UserModel();
     const emailExists = await userModel.findByEmail(user.email);

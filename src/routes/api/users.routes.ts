@@ -84,4 +84,17 @@ routes
     controllers.deleteOne
   );
 
+routes.route('/authenticate').post(
+  celebrate(
+    {
+      [Segments.BODY]: {
+        email: Joi.string().email().trim().required(),
+        password: Joi.string().required(),
+      },
+    },
+    { abortEarly: false }
+  ),
+  controllers.authenticate
+);
+
 export default routes;
