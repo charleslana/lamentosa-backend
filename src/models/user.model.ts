@@ -1,5 +1,12 @@
+import bcrypt from 'bcrypt';
+import config from '../config';
 import db from '../database';
 import User from '../types/user.type';
+
+const hasPassword = (password: string) => {
+  const salt = parseInt(config.salt as string, 10);
+  return bcrypt.hashSync(`${password}${config.pepper}`, salt);
+};
 
 class UserModel {
   public async createOne(user: User): Promise<User> {
@@ -9,7 +16,7 @@ class UserModel {
       values ($1, $2, $3, $4, $5) RETURNING id, email, user_name, gender_users, breed_users`;
       const result = await connection.query(sql, [
         user.email,
-        user.password,
+        hasPassword(user.password),
         user.userName,
         user.gender,
         user.breed,
@@ -109,7 +116,7 @@ class UserModel {
       WHERE id=$6 RETURNING id, email, user_name, gender_users, breed_users`;
       const result = await connection.query(sql, [
         user.email,
-        user.password,
+        hasPassword(user.password),
         user.userName,
         user.gender,
         user.breed,
