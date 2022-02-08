@@ -1,9 +1,9 @@
 class AppSuccess {
   public readonly message: string;
-  public readonly data: any;
+  public readonly data: unknown;
   public readonly statusCode: number;
 
-  constructor(message: string, data: any, statusCode = 200) {
+  constructor(message: string, data: unknown, statusCode = 200) {
     this.message = message;
     this.data = data;
     this.statusCode = statusCode;
