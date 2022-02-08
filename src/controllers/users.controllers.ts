@@ -77,7 +77,11 @@ export const getOne = async (
   next: NextFunction
 ) => {
   try {
-    const user = await userService.getOne(request.params.id as string);
+    const user = await userService.getOne(request.user.id);
+    // TODO
+    // Criar um controller separado para detalhes do usuário
+    // Esse serviço é pra admin
+    // const user = await userService.getOne(request.params.id as string);
     return response.json(new AppSuccess('User retrieved successfully', user));
   } catch (error) {
     next(error);

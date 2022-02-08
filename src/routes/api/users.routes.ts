@@ -1,4 +1,5 @@
 import * as controllers from '../../controllers/users.controllers';
+import authenticateMiddleware from '../../middleware/authenticate.middleware';
 import BreedEnum from '../../enum/breed.enum';
 import GenderEnum from '../../enum/gender.enum';
 import { celebrate, Joi, Segments } from 'celebrate';
@@ -8,7 +9,7 @@ const routes = Router();
 
 routes
   .route('/')
-  .get(controllers.getAll)
+  .get(authenticateMiddleware, controllers.getAll)
   .post(
     celebrate(
       {
@@ -34,6 +35,7 @@ routes
     controllers.createOne
   )
   .put(
+    authenticateMiddleware,
     celebrate(
       {
         [Segments.BODY]: {
@@ -62,6 +64,7 @@ routes
 routes
   .route('/:id')
   .get(
+    authenticateMiddleware,
     celebrate(
       {
         [Segments.PARAMS]: {
@@ -73,6 +76,7 @@ routes
     controllers.getOne
   )
   .delete(
+    authenticateMiddleware,
     celebrate(
       {
         [Segments.PARAMS]: {
