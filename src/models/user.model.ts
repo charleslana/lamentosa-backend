@@ -28,6 +28,7 @@ class UserModel {
             'SELECT id, email, user_name, gender_users, breed_users FROM users WHERE email = ($1)',
             [email]
           );
+          connection.release();
           return userInfo.rows[0];
         }
       }
