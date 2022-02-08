@@ -95,6 +95,19 @@ export const getOne = async (
   }
 };
 
+export const show = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await userService.show(request.user.id);
+    return response.json(new AppSuccess('User retrieved successfully', user));
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateOne = async (
   request: Request,
   response: Response,

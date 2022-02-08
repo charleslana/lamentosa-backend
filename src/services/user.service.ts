@@ -57,6 +57,15 @@ class UserService {
     return await userModel.getOne(id);
   }
 
+  public async show(id: string): Promise<User> {
+    const userModel = new UserModel();
+    const idExists = await userModel.findById(id);
+    if (!idExists) {
+      throw new AppError('User id not found');
+    }
+    return await userModel.getOne(id);
+  }
+
   public async updateOne(user: User, role: RoleEnum): Promise<User> {
     if (role !== RoleEnum.Admin) {
       throw new AppError('Unauthorized', 401);

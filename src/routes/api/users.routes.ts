@@ -7,6 +7,8 @@ import { Router } from 'express';
 
 const routes = Router();
 
+routes.route('/details').get(authenticateMiddleware, controllers.show);
+
 routes
   .route('/')
   .get(authenticateMiddleware, controllers.getAll)
