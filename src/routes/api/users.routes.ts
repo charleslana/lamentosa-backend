@@ -10,30 +10,6 @@ const routes = Router();
 routes
   .route('/')
   .get(authenticateMiddleware, controllers.getAll)
-  .post(
-    celebrate(
-      {
-        [Segments.BODY]: {
-          email: Joi.string().email().trim().max(50).required(),
-          password: Joi.string().required().min(6).max(50),
-          userName: Joi.string()
-            .pattern(new RegExp('^[a-zA-ZÀ-ú0-9_]*$'))
-            .trim()
-            .min(3)
-            .max(20)
-            .required(),
-          gender: Joi.string()
-            .valid(...Object.values(GenderEnum))
-            .required(),
-          breed: Joi.string()
-            .valid(...Object.values(BreedEnum))
-            .required(),
-        },
-      },
-      { abortEarly: false }
-    ),
-    controllers.createOne
-  )
   .put(
     authenticateMiddleware,
     celebrate(
@@ -42,7 +18,7 @@ routes
           id: Joi.string().uuid().required(),
           email: Joi.string().email().trim().max(50).required(),
           password: Joi.string().required().min(6).max(50),
-          userName: Joi.string()
+          name: Joi.string()
             .pattern(new RegExp('^[a-zA-ZÀ-ú0-9_]*$'))
             .trim()
             .min(3)
@@ -87,18 +63,5 @@ routes
     ),
     controllers.deleteOne
   );
-
-routes.route('/authenticate').post(
-  celebrate(
-    {
-      [Segments.BODY]: {
-        email: Joi.string().email().trim().required(),
-        password: Joi.string().required(),
-      },
-    },
-    { abortEarly: false }
-  ),
-  controllers.authenticate
-);
 
 export default routes;

@@ -2,6 +2,7 @@ import AppError from '../shared/app.error';
 import AppSuccess from '../shared/app.success';
 import config from '../config';
 import jwt from 'jsonwebtoken';
+import RoleEnum from '../enum/role.enum';
 import UserService from '../services/user.service';
 import { NextFunction, Request, Response } from 'express';
 
@@ -21,7 +22,9 @@ export const authenticate = async (
         401
       );
     }
-    const token = jwt.sign({ user }, config.tokenSecret as string);
+    const token = jwt.sign({ user }, config.tokenSecret as string, {
+      expiresIn: '1d',
+    });
     return response.json(
       new AppSuccess('User authenticated successfully', { ...user, token })
     );
@@ -51,7 +54,10 @@ export const deleteOne = async (
   next: NextFunction
 ) => {
   try {
-    const user = await userService.deleteOne(request.params.id as string);
+    const user = await userService.deleteOne(
+      request.params.id as string,
+      request.user.role as unknown as RoleEnum
+    );
     return response.json(new AppSuccess('User deleted successfully', user));
   } catch (error) {
     next(error);
@@ -64,7 +70,9 @@ export const getAll = async (
   next: NextFunction
 ) => {
   try {
-    const users = await userService.getAll();
+    const users = await userService.getAll(
+      request.user.role as unknown as RoleEnum
+    );
     return response.json(new AppSuccess('Users retrieved successfully', users));
   } catch (error) {
     next(error);
@@ -77,11 +85,10 @@ export const getOne = async (
   next: NextFunction
 ) => {
   try {
-    const user = await userService.getOne(request.user.id);
-    // TODO
-    // Criar um controller separado para detalhes do usuário
-    // Esse serviço é pra admin
-    // const user = await userService.getOne(request.params.id as string);
+    const user = await userService.getOne(
+      request.params.id as string,
+      request.user.role as unknown as RoleEnum
+    );
     return response.json(new AppSuccess('User retrieved successfully', user));
   } catch (error) {
     next(error);
@@ -94,7 +101,10 @@ export const updateOne = async (
   next: NextFunction
 ) => {
   try {
-    const user = await userService.updateOne(request.body);
+    const user = await userService.updateOne(
+      request.body,
+      request.user.role as unknown as RoleEnum
+    );
     return response.json(new AppSuccess('User updated successfully', user));
   } catch (error) {
     next(error);

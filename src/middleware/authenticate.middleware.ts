@@ -25,6 +25,7 @@ const authenticateMiddleware = (
           const { user } = decode as DecodeType;
           request.user = {
             id: user.id as string,
+            role: user.role as unknown as string,
           };
           return next();
         }

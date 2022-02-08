@@ -25,7 +25,7 @@ class UserModel {
         );
         if (isPasswordValid) {
           const userInfo = await connection.query(
-            'SELECT id, email, user_name, gender_users, breed_users FROM users WHERE email = ($1)',
+            'SELECT id, email, name, gender, breed, role FROM users WHERE email = ($1)',
             [email]
           );
           connection.release();
@@ -42,12 +42,12 @@ class UserModel {
   public async createOne(user: User): Promise<User> {
     try {
       const connection = await db.connect();
-      const sql = `INSERT INTO users (email, password, user_name, gender_users, breed_users)
-      values ($1, $2, $3, $4, $5) RETURNING id, email, user_name, gender_users, breed_users`;
+      const sql = `INSERT INTO users (email, password, name, gender, breed)
+      VALUES ($1, $2, $3, $4, $5) RETURNING id, email, name, gender, breed`;
       const result = await connection.query(sql, [
         user.email,
         hasPassword(user.password),
-        user.userName,
+        user.name,
         user.gender,
         user.breed,
       ]);
@@ -55,7 +55,7 @@ class UserModel {
       return result.rows[0];
     } catch (error) {
       throw new Error(
-        `Unable to create (${user.userName}): ${(error as Error).message}`
+        `Unable to create (${user.name}): ${(error as Error).message}`
       );
     }
   }
@@ -64,7 +64,7 @@ class UserModel {
     try {
       const connection = await db.connect();
       const sql =
-        'DELETE FROM users WHERE id=($1) RETURNING id, email, user_name, gender_users, breed_users';
+        'DELETE FROM users WHERE id=($1) RETURNING id, email, name, gender, breed';
       const result = await connection.query(sql, [id]);
       connection.release();
       return result.rows[0];
@@ -101,16 +101,16 @@ class UserModel {
     }
   }
 
-  public async findByUserName(userName: string): Promise<User | undefined> {
+  public async findByName(name: string): Promise<User | undefined> {
     try {
       const connection = await db.connect();
-      const sql = 'SELECT id, user_name FROM users WHERE user_name = ($1)';
-      const result = await connection.query(sql, [userName]);
+      const sql = 'SELECT id, name FROM users WHERE name = ($1)';
+      const result = await connection.query(sql, [name]);
       connection.release();
       return result.rows[0];
     } catch (error) {
       throw new Error(
-        `Could not find username ${userName}, ${(error as Error).message}`
+        `Could not find username ${name}, ${(error as Error).message}`
       );
     }
   }
@@ -118,8 +118,7 @@ class UserModel {
   public async getAll(): Promise<User[]> {
     try {
       const connection = await db.connect();
-      const sql =
-        'SELECT id, email, user_name, gender_users, breed_users FROM users';
+      const sql = 'SELECT id, email, name, gender, breed, role FROM users';
       const result = await connection.query(sql);
       connection.release();
       return result.rows;
@@ -132,7 +131,7 @@ class UserModel {
     try {
       const connection = await db.connect();
       const sql =
-        'SELECT id, email, user_name, gender_users, breed_users FROM users WHERE id = ($1)';
+        'SELECT id, email, name, gender, breed, role FROM users WHERE id = ($1)';
       const result = await connection.query(sql, [id]);
       connection.release();
       return result.rows[0];
@@ -144,12 +143,12 @@ class UserModel {
   public async updateOne(user: User): Promise<User> {
     try {
       const connection = await db.connect();
-      const sql = `UPDATE users SET email=$1, password=$2, user_name=$3, gender_users=$4, breed_users=$5
-      WHERE id=$6 RETURNING id, email, user_name, gender_users, breed_users`;
+      const sql = `UPDATE users SET email=$1, password=$2, name=$3, gender=$4, breed=$5
+      WHERE id=$6 RETURNING id, email, name, gender, breed`;
       const result = await connection.query(sql, [
         user.email,
         hasPassword(user.password),
-        user.userName,
+        user.name,
         user.gender,
         user.breed,
         user.id,
@@ -158,7 +157,7 @@ class UserModel {
       return result.rows[0];
     } catch (error) {
       throw new Error(
-        `Could not update user: (${user.userName}): ${(error as Error).message}`
+        `Could not update user: (${user.name}): ${(error as Error).message}`
       );
     }
   }

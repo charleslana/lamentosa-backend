@@ -1,4 +1,5 @@
 import AppError from '../shared/app.error';
+import RoleEnum from '../enum/role.enum';
 import User from '../types/user.type';
 import UserModel from '../models/user.model';
 
@@ -17,14 +18,17 @@ class UserService {
     if (emailExists) {
       throw new AppError('Email already exists');
     }
-    const userNameExists = await userModel.findByUserName(user.userName);
+    const userNameExists = await userModel.findByName(user.name);
     if (userNameExists) {
       throw new AppError('Username already exists');
     }
     return await userModel.createOne(user);
   }
 
-  public async deleteOne(id: string): Promise<User> {
+  public async deleteOne(id: string, role: RoleEnum): Promise<User> {
+    if (role !== RoleEnum.Admin) {
+      throw new AppError('Unauthorized', 401);
+    }
     const userModel = new UserModel();
     const idExists = await userModel.findById(id);
     if (!idExists) {
@@ -33,12 +37,18 @@ class UserService {
     return await userModel.deleteOne(id);
   }
 
-  public async getAll(): Promise<User[]> {
+  public async getAll(role: RoleEnum): Promise<User[]> {
+    if (role !== RoleEnum.Admin) {
+      throw new AppError('Unauthorized', 401);
+    }
     const userModel = new UserModel();
     return await userModel.getAll();
   }
 
-  public async getOne(id: string): Promise<User> {
+  public async getOne(id: string, role: RoleEnum): Promise<User> {
+    if (role !== RoleEnum.Admin) {
+      throw new AppError('Unauthorized', 401);
+    }
     const userModel = new UserModel();
     const idExists = await userModel.findById(id);
     if (!idExists) {
@@ -47,7 +57,10 @@ class UserService {
     return await userModel.getOne(id);
   }
 
-  public async updateOne(user: User): Promise<User> {
+  public async updateOne(user: User, role: RoleEnum): Promise<User> {
+    if (role !== RoleEnum.Admin) {
+      throw new AppError('Unauthorized', 401);
+    }
     const userModel = new UserModel();
     const idExists = await userModel.findById(user.id as string);
     if (!idExists) {
@@ -57,7 +70,7 @@ class UserService {
     if (emailExists && emailExists.id !== user.id) {
       throw new AppError('Email already exists');
     }
-    const userNameExists = await userModel.findByUserName(user.userName);
+    const userNameExists = await userModel.findByName(user.name);
     if (userNameExists && userNameExists.id !== user.id) {
       throw new AppError('Username already exists');
     }
