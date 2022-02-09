@@ -2,6 +2,7 @@ import * as controllers from '../../controllers/users.controllers';
 import authenticateMiddleware from '../../middleware/authenticate.middleware';
 import BreedEnum from '../../enum/breed.enum';
 import GenderEnum from '../../enum/gender.enum';
+import RoleEnum from '../../enum/role.enum';
 import { celebrate, Joi, Segments } from 'celebrate';
 import { Router } from 'express';
 
@@ -31,6 +32,9 @@ routes
             .required(),
           breed: Joi.string()
             .valid(...Object.values(BreedEnum))
+            .required(),
+          role: Joi.string()
+            .valid(...Object.values(RoleEnum))
             .required(),
         },
       },

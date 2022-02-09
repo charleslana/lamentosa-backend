@@ -1,6 +1,6 @@
 enum BreedEnum {
-  Vampire,
-  Werewolf,
+  Vampire = 'Vampire',
+  Werewolf = 'Werewolf',
 }
 
 export default BreedEnum;

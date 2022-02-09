@@ -46,7 +46,7 @@ class UserModel {
       VALUES ($1, $2, $3, $4, $5) RETURNING id, email, name, gender, breed`;
       const result = await connection.query(sql, [
         user.email,
-        hasPassword(user.password),
+        hasPassword(user.password as string),
         user.name,
         user.gender,
         user.breed,
@@ -143,14 +143,15 @@ class UserModel {
   public async updateOne(user: User): Promise<User> {
     try {
       const connection = await db.connect();
-      const sql = `UPDATE users SET email=$1, password=$2, name=$3, gender=$4, breed=$5
-      WHERE id=$6 RETURNING id, email, name, gender, breed`;
+      const sql = `UPDATE users SET email=$1, password=$2, name=$3, gender=$4, breed=$5, role=$6
+      WHERE id=$7 RETURNING id, email, name, gender, breed, role`;
       const result = await connection.query(sql, [
         user.email,
-        hasPassword(user.password),
+        hasPassword(user.password as string),
         user.name,
         user.gender,
         user.breed,
+        user.role,
         user.id,
       ]);
       connection.release();

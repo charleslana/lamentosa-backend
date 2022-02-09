@@ -5,7 +5,7 @@ import RoleEnum from '../enum/role.enum';
 type User = {
   id?: string;
   email: string;
-  password: string;
+  password?: string;
   name: string;
   gender: GenderEnum;
   breed: BreedEnum;
